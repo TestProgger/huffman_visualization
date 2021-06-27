@@ -5,6 +5,13 @@ from graphviz import Digraph , ENGINES , FORMATS
 import argparse
 
 
+##### My Libs ;)
+
+from lib.BinaryTree import BinaryTree
+from lib.Code import Code
+from lib.Node import Node
+
+
 parser = argparse.ArgumentParser(description="Haffman Tree")
 parser.add_argument('-N' , dest='N' , required=True , type=int )
 parser.add_argument('-p0' , dest='pz' , required=True, type=float)
@@ -15,93 +22,6 @@ parser.add_argument('--file-format' , dest='fileformat' , required=False , type=
 config = parser.parse_args()
 
 max_code_length = len( bin( config.N - 1 ).replace('0b','') )
-
-class Code:
-    def __init__(self , probability : float  , code : str , bit : bool):
-        self.probability = probability
-        self.code = code
-        self.bit = bit
-    def __repr__(self):
-        return f"({self.probability} , {self.code} , {self.bit})"
-    def __str__(self):
-        return f"({self.probability} , {self.code} , {self.bit})"
-    def __eq__(self, other):
-        if isinstance(other , Code):
-            return self.probability == other.probability
-        else:
-            return False
-    def __lt__(self, other):
-        if isinstance(other , Code):
-            return self.probability < other.probability
-        else:
-            return False
-
-    def __gt__(self, other):
-        if isinstance(other , Code):
-            return self.probability > other.probability
-        else:
-            return False
-
-
-    def set_bit(self , bit):
-        self.bit = bit
-
-class Node:
-    def __init__(self , marker : str , data : str) -> None:
-        self.marker = marker
-        self.data = data
-
-    def __lt__(self, other):
-        return len(self.marker) < len(other.marker)
-    
-    def __gt__(self, other):
-        return len(self.marker) > len(other.marker)
-
-    def __eq__(self, other):
-        return len(self.marker) == len(other.marker) and self.marker != other.marker
-
-    def __repr__(self) -> str:
-        return f"{ self.marker } : {self.data}"
-
-    def __str__(self) -> str:
-        return f"{ self.marker } : {self.data}"
-
-class BinaryTree:
-    def __init__(self , data : Code = None , marker : str = 'p' ):
-        self.data = data
-        self.right : BinaryTree = None
-        self.left : BinaryTree = None
-        self.parrent : BinaryTree = None
-        self.marker = marker
-
-    def insert(self , data : Code  , marker : str  = 'p'):
-        if self.data == None:
-            self.data = data
-        if self.data.code == data.code:
-            return
-
-        if self.data.code.find("|") +1:
-            __left = self.data.code.split("|")[1]
-            __right = self.data.code.split("|")[0]
-
-            if  __left.find( data.code.replace("|", ";") ) + 1:
-                if self.left == None:
-                    self.left = BinaryTree(data, marker+'l')
-                else:
-                    self.left.insert(data)
-
-            if  __right.find( data.code.replace("|", ";") ) + 1:
-                if self.right == None:
-                    self.right = BinaryTree(data, marker+'r')
-                else:
-                    self.right.insert(data)
-
-    def __repr__(self):
-        return f"Node ( prb: {self.data.probability}  mark : {self.marker}  )"
-
-    def __str__(self):
-        return f"Node ( prb: {self.data.probability}  mark : {self.marker} )"
-
 
 
 def init_order(node : BinaryTree  , marker: str):
