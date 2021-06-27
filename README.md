@@ -10,6 +10,8 @@ Install python wrap by graphviz
     pip install graphviz
 ```
 
+### Usage
+
 Example
 ```bash
     python main.py -N 128 -p0 0.1 -p1 0.9 -fn <filename> 
