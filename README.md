@@ -29,4 +29,3 @@ Example
     --file-format   Output file format
         
 ```
-'
