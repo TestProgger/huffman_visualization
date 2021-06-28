@@ -16,7 +16,7 @@ parser.add_argument('-p0' , dest='pz' , required=True, type=float)
 parser.add_argument('-p1' , dest='po' , required=True , type=float)
 parser.add_argument('-fn' , dest='filename' , required=True , type=str )
 parser.add_argument('-engine' ,dest='engine' , required=False , type=str , default='dot' ,choices=ENGINES)
-parser.add_argument('--file-format' , dest='fileformat' , required=False , type=str , choices=FORMATS)
+parser.add_argument('--file-format' , dest='fileformat' , required=False , type=str , choices=FORMATS , default="jpeg")
 config = parser.parse_args()
 
 max_code_length = len( bin( config.N - 1 ).replace('0b','') )
@@ -63,8 +63,6 @@ binary_marked_nodes = handlers.symbol_mark_to_bin(binary_marked_nodes)
 csv_writer = CsvWriter( config.filename)
 
 Ne_row = [ len(i) for i in binary_marked_nodes  ]
-
-
 pNe = [ Ne_row[ind]*__huffman_matrix[ind].probability  for ind , val in enumerate(Ne_row) ]
 
 
