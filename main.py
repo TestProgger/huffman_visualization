@@ -1,15 +1,13 @@
-from math import pow
-from pprint import pprint
-from sys import argv
 from graphviz import Digraph , ENGINES , FORMATS
 import argparse
-
 
 ##### My Libs ;)
 
 from lib.BinaryTree import BinaryTree
 from lib.Code import Code
-from lib.Node import Node
+from lib.Node import  Node
+from lib.Handlers  import  Handlers
+from lib.CsvWriter import CsvWriter
 
 
 parser = argparse.ArgumentParser(description="Haffman Tree")
@@ -24,59 +22,15 @@ config = parser.parse_args()
 max_code_length = len( bin( config.N - 1 ).replace('0b','') )
 
 
-def init_order(node : BinaryTree  , marker: str):
-    mas = {}
-    if node:
-        mas[marker+ "l"] = init_order(node.left , marker + "l")
-        mas[marker]  =  node.data.probability
-        mas[marker+ "r"] = init_order(node.right , marker + 'r')
-    return mas if mas != {} else None
-
-def init_order_with_marked_endpoint(node : BinaryTree  , marker: str):
-    mas = {}
-    if node:
-        mas[marker+ "l"] = init_order_with_marked_endpoint(node.left , marker + "l")
-        if node.right == None and node.left == None:
-            mas[marker+ "e"]  =  node.data.probability
-        else:
-            mas[marker]  =  node.data.probability
-        mas[marker+ "r"] = init_order_with_marked_endpoint(node.right , marker + 'r')
-    return mas if mas != {} else None
+handlers = Handlers(max_code_length , config)
 
 
-def tree_to_node( tree : dict ):
-    nodes = []
-    for key , val in tree.items():
-        if isinstance( val  , dict):
-            nodes += tree_to_node( val )
-        else:
-            nodes.append( Node(key , val) )
-    return nodes
-
-def get_formated_code(num : int):
-    code = bin(num).replace('0b', '').zfill(max_code_length)
-    probability = round( pow( config.pz , code.count('0')  ) * pow( config.po , code.count('1') ) , 12)
-    return Code( probability , code , False )
-
-def copy_obj( obj : list[Code] ):
-    __tmp_arr = []
-    for code in obj:
-        __tmp_arr.append( Code( code.probability , code.code , False ) )
-    return __tmp_arr
-
-def symbol_mark_to_bin( nodes : list[Node] ):
-    bin_marked_nodes = list()
-    for node in nodes:
-        bin_marked_nodes.append( 
-                node.marker.replace('p' , '').replace('l' , '0').replace('r' , '1'))
-    return bin_marked_nodes
-
-haffman_matrix = [sorted([ get_formated_code(i) for i in range(config.N) ])]
+haffman_matrix = [sorted([ handlers.get_formated_code(i) for i in range(config.N) ])]
 haffman_matrix[0].reverse()
-
+__haffman_matrix = haffman_matrix[0]
 
 while len( haffman_matrix[-1] ) > 1:
-    __tmp_arr = copy_obj( haffman_matrix[-1] )
+    __tmp_arr = handlers.copy_obj( haffman_matrix[-1] )
 
     haffman_matrix[-1][-1].set_bit(True)
     haffman_matrix[-1][-2].set_bit(False)
@@ -96,17 +50,52 @@ for code_vector in haffman_matrix:
     for code in code_vector:
         binTree.insert(code)
 
-tree = init_order(binTree , 'p') 
-nodes = sorted(list( filter( lambda x : x.data ,  tree_to_node(tree)) ))
+tree = handlers.init_order(binTree , 'p')
+nodes = sorted(list( filter( lambda x : x.data ,  handlers.tree_to_node(tree)) ))
 
 
-binary_marked_nodes = sorted(list( filter( lambda x : x.data , tree_to_node( init_order_with_marked_endpoint(binTree , 'p') ))))
-binary_marked_nodes = list( filter( lambda node : node.marker.endswith('e') , binary_marked_nodes   )) 
+
+
+
+
+
+
+
+
+binary_marked_nodes = sorted(list( filter( lambda x : x.data , handlers.tree_to_node( handlers.init_order_with_marked_endpoint(binTree , 'p') ))))
+binary_marked_nodes = list( filter( lambda node : node.marker.endswith('e') , binary_marked_nodes   ))
 binary_marked_nodes = list( map( lambda node: Node( node.marker.replace('e' , '') , node.data) , binary_marked_nodes ) )
-binary_marked_nodes = symbol_mark_to_bin(binary_marked_nodes)
-print("\n".join(binary_marked_nodes))
+binary_marked_nodes = handlers.symbol_mark_to_bin(binary_marked_nodes)
+
+#
+#   interface csv_file{
+#       Xi : int
+#       p(Xi) : float
+#       'Кодовая комбинация' : str
+#       Nэi : int
+#       'p(xi)*Nэi' : float
+#   }
+#
 
 
+csv_writer = CsvWriter( config.filename)
+
+Ne_row = [ len(i) for i in binary_marked_nodes  ]
+
+# print(len(Ne_row) , len(haffman_matrix[0]))
+
+pNe = [ Ne_row[ind]*__haffman_matrix[ind].probability  for ind , val in enumerate(Ne_row) ]
+
+
+# print(__haffman_matrix)
+csv_writer.prepare_data(
+    __haffman_matrix,
+    binary_marked_nodes,
+    Ne_row,
+    pNe
+)
+
+csv_writer.write()
 
 graph = Digraph('Hello' , format=config.fileformat , encoding="utf-8" , strict=True , engine=config.engine)
 
