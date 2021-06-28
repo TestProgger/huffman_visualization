@@ -10,7 +10,7 @@ from lib.Handlers  import  Handlers
 from lib.CsvWriter import CsvWriter
 
 
-parser = argparse.ArgumentParser(description="Haffman Tree")
+parser = argparse.ArgumentParser(description="huffman Tree")
 parser.add_argument('-N' , dest='N' , required=True , type=int )
 parser.add_argument('-p0' , dest='pz' , required=True, type=float)
 parser.add_argument('-p1' , dest='po' , required=True , type=float)
@@ -25,28 +25,28 @@ max_code_length = len( bin( config.N - 1 ).replace('0b','') )
 handlers = Handlers(max_code_length , config)
 
 
-haffman_matrix = [sorted([ handlers.get_formated_code(i) for i in range(config.N) ])]
-haffman_matrix[0].reverse()
-__haffman_matrix = haffman_matrix[0]
+huffman_matrix = [sorted([ handlers.get_formated_code(i) for i in range(config.N) ])]
+huffman_matrix[0].reverse()
+__huffman_matrix = huffman_matrix[0]
 
-while len( haffman_matrix[-1] ) > 1:
-    __tmp_arr = handlers.copy_obj( haffman_matrix[-1] )
+while len( huffman_matrix[-1] ) > 1:
+    __tmp_arr = handlers.copy_obj( huffman_matrix[-1] )
 
-    haffman_matrix[-1][-1].set_bit(True)
-    haffman_matrix[-1][-2].set_bit(False)
+    huffman_matrix[-1][-1].set_bit(True)
+    huffman_matrix[-1][-2].set_bit(False)
 
     __tmp_sum = round( __tmp_arr[-1].probability + __tmp_arr[-2].probability , 12)
     __tmp_code = __tmp_arr[-2].code.replace("|" , ";") + "|"+ __tmp_arr[-1].code.replace("|" , ";")
-    haffman_matrix.append(__tmp_arr[:-1] )
-    haffman_matrix[-1][-1] = Code( __tmp_sum , __tmp_code , False )
-    haffman_matrix[-1].sort()
-    haffman_matrix[-1].reverse()
+    huffman_matrix.append(__tmp_arr[:-1] )
+    huffman_matrix[-1][-1] = Code( __tmp_sum , __tmp_code , False )
+    huffman_matrix[-1].sort()
+    huffman_matrix[-1].reverse()
 
-haffman_matrix.reverse()
+huffman_matrix.reverse()
 
 binTree = BinaryTree()
-binTree.insert(haffman_matrix[0][0])
-for code_vector in haffman_matrix:
+binTree.insert(huffman_matrix[0][0])
+for code_vector in huffman_matrix:
     for code in code_vector:
         binTree.insert(code)
 
@@ -65,11 +65,11 @@ csv_writer = CsvWriter( config.filename)
 Ne_row = [ len(i) for i in binary_marked_nodes  ]
 
 
-pNe = [ Ne_row[ind]*__haffman_matrix[ind].probability  for ind , val in enumerate(Ne_row) ]
+pNe = [ Ne_row[ind]*__huffman_matrix[ind].probability  for ind , val in enumerate(Ne_row) ]
 
 
 csv_writer.prepare_data(
-    __haffman_matrix,
+    __huffman_matrix,
     binary_marked_nodes,
     Ne_row,
     pNe

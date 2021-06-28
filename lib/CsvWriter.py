@@ -19,7 +19,6 @@ class CsvWriter:
 
     def write(self):
         headers = [ 'Xi' , 'p(Xi)' , 'Кодовая комбинация' , 'Nэi' , 'p(xi)*Nэi' ]
-        print(self.prepared_dict)
         with open("./out/" + self.filename + ".csv" , "w" , encoding='utf-8') as csvW:
             csv_writer = csv.DictWriter(csvW  , lineterminator="\r", fieldnames=headers )
             csv_writer.writeheader()
