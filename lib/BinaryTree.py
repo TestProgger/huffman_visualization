@@ -5,7 +5,6 @@ class BinaryTree:
         self.data = data
         self.right : BinaryTree = None
         self.left : BinaryTree = None
-        self.parrent : BinaryTree = None
         self.marker = marker
 
     def insert(self , data : Code  , marker : str  = 'p'):
