@@ -21,7 +21,22 @@ class CsvWriter:
         headers = [ 'Xi' , 'p(Xi)' , 'Кодовая комбинация' , 'Nэi' , 'p(xi)*Nэi' ]
         print(self.prepared_dict)
         with open("./out/" + self.filename + ".csv" , "w" , encoding='utf-8') as csvW:
-            csv_writer = csv.DictWriter(csvW  , lineterminator="\r", fieldnames=headers)
+            csv_writer = csv.DictWriter(csvW  , lineterminator="\r", fieldnames=headers )
             csv_writer.writeheader()
+
+            __sum_P = 0
+            __sum_N = 0
+
             for row in self.prepared_dict:
+                __sum_P += row['p(Xi)']
+                __sum_N += row['p(xi)*Nэi']
                 csv_writer.writerow(row)
+            csv_writer.writerow( 
+                {
+                    'Xi' : 'P(x) = ',
+                    'p(Xi)' : round(__sum_P , 11),
+                    'Кодовая комбинация' : '' ,
+                    'Nэi' : '\sum p(xi)*Nэi = ',
+                    'p(xi)*Nэi' : __sum_N
+                }
+            )
