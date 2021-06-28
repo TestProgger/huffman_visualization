@@ -53,41 +53,21 @@ for code_vector in haffman_matrix:
 tree = handlers.init_order(binTree , 'p')
 nodes = sorted(list( filter( lambda x : x.data ,  handlers.tree_to_node(tree)) ))
 
-
-
-
-
-
-
-
-
-
 binary_marked_nodes = sorted(list( filter( lambda x : x.data , handlers.tree_to_node( handlers.init_order_with_marked_endpoint(binTree , 'p') ))))
 binary_marked_nodes = list( filter( lambda node : node.marker.endswith('e') , binary_marked_nodes   ))
 binary_marked_nodes = list( map( lambda node: Node( node.marker.replace('e' , '') , node.data) , binary_marked_nodes ) )
 binary_marked_nodes = handlers.symbol_mark_to_bin(binary_marked_nodes)
 
-#
-#   interface csv_file{
-#       Xi : int
-#       p(Xi) : float
-#       'Кодовая комбинация' : str
-#       Nэi : int
-#       'p(xi)*Nэi' : float
-#   }
-#
 
 
 csv_writer = CsvWriter( config.filename)
 
 Ne_row = [ len(i) for i in binary_marked_nodes  ]
 
-# print(len(Ne_row) , len(haffman_matrix[0]))
 
 pNe = [ Ne_row[ind]*__haffman_matrix[ind].probability  for ind , val in enumerate(Ne_row) ]
 
 
-# print(__haffman_matrix)
 csv_writer.prepare_data(
     __haffman_matrix,
     binary_marked_nodes,
