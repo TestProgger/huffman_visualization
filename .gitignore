@@ -1,2 +1,10 @@
 lib/__pycache__/
 .idea/
+
+*.png 
+*.jpeg
+*.jpg
+*.pdf
+*.svg
+*.bmp
+*.csv
