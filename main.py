@@ -4,7 +4,7 @@ import argparse
 from zipfile import ZipFile , ZIP_DEFLATED
 from multiprocessing import Pool
 
-
+from time import time
 
 ##### My Libs ;)
 
@@ -14,6 +14,7 @@ from lib.Node import  Node
 from lib.Handlers  import  Handlers
 from lib.CsvWriter import CsvWriter
 
+BEGIN_TIME = time()
 
 parser = argparse.ArgumentParser(description="huffman Tree")
 parser.add_argument('-N' , dest='N' , required=True , type=int )
@@ -22,8 +23,7 @@ parser.add_argument('-p1' , dest='po' , required=True , type=float)
 parser.add_argument('-fn' , dest='filename' , required=True , type=str )
 parser.add_argument('--no-csv' , dest='no_csv' , required=False  , default=False , action="store_true")
 parser.add_argument('--no-tree' , dest='no_tree' , required=False , default=False , action="store_true")
-parser.add_argument('-engine' ,dest='engine' , required=False , type=str , default='dot' ,choices=ENGINES)
-parser.add_argument('--file-format' , dest='fileformat' , required=False , type=str , choices=FORMATS , default="jpeg")
+parser.add_argument('--engine' ,dest='engine' , required=False , type=str , default='dot' ,choices=ENGINES)
 parser.add_argument('--file-formats' , dest='fileformats' , required=False , type=str , default="jpeg")
 parser.add_argument('--zip' , dest='zip' , required=False , action="store_true")
 config = parser.parse_args()
@@ -40,9 +40,6 @@ __huffman_matrix = huffman_matrix[0]
 
 while len( huffman_matrix[-1] ) > 1:
     __tmp_arr = handlers.copy_obj( huffman_matrix[-1] )
-
-    # huffman_matrix[-1][-1].set_bit(True)
-    # huffman_matrix[-1][-2].set_bit(False)
 
     __tmp_sum = round( __tmp_arr[-1].probability + __tmp_arr[-2].probability , 12)
     __tmp_code = __tmp_arr[-2].code.replace("|" , ";") + "|"+ __tmp_arr[-1].code.replace("|" , ";")
@@ -120,16 +117,25 @@ def main():
         visualization_files = pool.map( draw_tree  , data_to_draw )
     
     if config.zip:
-        with ZipFile(filename + ".zip"  , mode='w' , compression=ZIP_DEFLATED) as zp:
-            for files in visualization_files:
-                zp.write(files)
+        with ZipFile('./out/' + filename + ".zip"  , mode='w' , compression=ZIP_DEFLATED) as zp:
+            for file in visualization_files:
+                zp.write(file)
+                os.remove(file)
             zp.write( './out/' + filename+".csv" )
+            os.remove('./out/' + filename+".csv")
+
+
+    print(f"""\n\n
+        При:
+            N  =  {config.N}
+            p(0) = {config.pz}
+            p(1) = {config.po}
+            file-formats = { " | ".join( fileformats ) }
+        
+        Время выполнения составило : {round( time() - BEGIN_TIME , 3 )} с
+        
+    \n\n""")
     
-
- 
-    
-
-
 
 if __name__ == "__main__":
     if not config.no_tree:

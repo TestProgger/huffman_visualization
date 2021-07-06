@@ -23,7 +23,3 @@ class Code:
             return self.probability > other.probability
         else:
             return False
-
-
-    # def set_bit(self , bit):
-    #     self.bit = bit
