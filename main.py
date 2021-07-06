@@ -32,8 +32,8 @@ __huffman_matrix = huffman_matrix[0]
 while len( huffman_matrix[-1] ) > 1:
     __tmp_arr = handlers.copy_obj( huffman_matrix[-1] )
 
-    huffman_matrix[-1][-1].set_bit(True)
-    huffman_matrix[-1][-2].set_bit(False)
+    # huffman_matrix[-1][-1].set_bit(True)
+    # huffman_matrix[-1][-2].set_bit(False)
 
     __tmp_sum = round( __tmp_arr[-1].probability + __tmp_arr[-2].probability , 12)
     __tmp_code = __tmp_arr[-2].code.replace("|" , ";") + "|"+ __tmp_arr[-1].code.replace("|" , ";")

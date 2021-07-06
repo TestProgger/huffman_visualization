@@ -2,7 +2,7 @@ class Code:
     def __init__(self , probability : float  , code : str , bit : bool):
         self.probability = probability
         self.code = code
-        self.bit = bit
+        # self.bit = bit
     def __repr__(self):
         return f"({self.probability} , {self.code} , {self.bit})"
     def __str__(self):
@@ -25,5 +25,5 @@ class Code:
             return False
 
 
-    def set_bit(self , bit):
-        self.bit = bit
+    # def set_bit(self , bit):
+    #     self.bit = bit
