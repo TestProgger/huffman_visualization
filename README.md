@@ -18,14 +18,15 @@ Example
 ```
 
 ```bash
-
-    usage: main.py [-h] -N N -p0 PZ -p1 PO -fn FILENAME [-engine {neato,osage,patchwork,circo,twopi,fdp,sfdp,dot}]
-    
     -N              Maximum number is a combination
     -p0             Probability of occurrence of zero
     -p1             Probability of occurrence of one
     -fn             Name of the output file
-    -engine         Which engine will be used to render the tree    
-    --file-format   Output file format
+    --engine        Which engine will be used to render the tree    
+    --file-formats  Output file formats
+    --zip           Archive output files
+
+    --no-csv        Don't generate csv  
+    --no-tree       Don't generate a tree image
         
 ```
