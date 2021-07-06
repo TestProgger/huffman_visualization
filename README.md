@@ -28,5 +28,4 @@ Example
 
     --no-csv        Don't generate csv  
     --no-tree       Don't generate a tree image
-        
 ```
